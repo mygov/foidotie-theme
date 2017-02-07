@@ -886,13 +886,13 @@ dt {
 }
 
 .new-request__title {
-  color: $color_white;
+  color: $color_secondary;
   font-size: 1.4375em;
   margin: 0 0 0.5em;
 }
 
 .new-request__description {
-  color: transparentize($color_white, 0.2);
+  color: transparentize($color_secondary, 0.2);
   @include ie8 {
     color: $color_white;
   }
