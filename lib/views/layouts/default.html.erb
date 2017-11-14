@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<%= I18n.locale %>" class="no-js">
+<html lang="<%= AlaveteliLocalization.html_lang %>" class="no-js">
   <head>
     <meta charset="utf-8">
     <%= csrf_meta_tags %>
@@ -33,9 +33,8 @@
     <% if @no_crawl %>
       <meta name="robots" content="noindex, nofollow">
     <% end %>
-    <% if AlaveteliConfiguration::responsive_styling || params[:responsive] %>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <% end %>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <%= render :partial => 'general/opengraph_tags' %>
     <%= render :partial => 'general/before_head_end' %>
     <!-- Replace the html tag's no-js class with js -->
@@ -53,6 +52,7 @@
 
     <a href="#content" class="show-with-keyboard-focus-only skip-to-link" tabindex="0">Skip to content</a>
       <!-- begin popups -->
+        <% unless cookies['seen_foi2'].to_s == '1' %>
           <% popup_banner = render(:partial => "general/popup_banner").strip %>
           <% if popup_banner.present? and  ! @render_to_file %>
             <div class="popup popup--popup popup--standard" role="alert" id="standard-popup">
@@ -66,22 +66,21 @@
               </div>
             </div>
           <% end %>
-          <div id="country-message">
-          </div>
+        <% end %>
+        <div id="country-message">
+        </div>
       <!-- end popups -->
-      <% if AlaveteliConfiguration::responsive_styling || params[:responsive] %>
-        <%= render :partial => 'general/responsive_header' %>
-      <% else %>
-        <%= render :partial => 'general/header' %>
-      <% end %>
+
+      <%= render :partial => 'general/responsive_header' %>
+
       <div id="wrapper">
         <div id="content" role="main">
           <% unless params[:action] == 'frontpage' %>
             <% if flash[:notice] %>
-              <div id="notice"><%= flash[:notice] %></div>
+              <div id="notice"><%= render_flash(flash[:notice]) %></div>
             <% end %>
             <% if flash[:error] %>
-              <div id="error"><%= flash[:error] %></div>
+              <div id="error"><%= render_flash(flash[:error]) %></div>
             <% end %>
           <% end %>
 
@@ -91,15 +90,11 @@
           <div style="clear:both"></div>
         </div>
       </div>
-      <% if AlaveteliConfiguration::responsive_styling || params[:responsive] %>
-        <%= render :partial => 'general/responsive_footer' %>
-      <% else %>
-        <%= render :partial => 'general/footer' %>
-      <% end %>
 
+      <%= render :partial => 'general/responsive_footer' %>
     </div>
     <%
-        unless AlaveteliConfiguration::ga_code.empty? || (@user && @user.super?) %>
+        unless AlaveteliConfiguration::ga_code.empty? || (@user && @user.is_admin?) %>
       <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -129,7 +124,7 @@
             'width': 950,
             'height': 400,
             'type': 'iframe',
-            'href': '/<%= FastGettext.locale %>/profile/sign_in?modal=1',
+            'href': '/<%= AlaveteliLocalization.locale %>/profile/sign_in?modal=1',
             'onClosed': function() {
               // modal_signin_successful variable set by modal dialog box
               if (typeof modal_signin_successful != 'undefined' ) {
@@ -143,6 +138,5 @@
     <%= content_for :javascript %>
 
     <%= render :partial => 'general/before_body_end' %>
-
   </body>
 </html>
